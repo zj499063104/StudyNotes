@@ -649,7 +649,7 @@ Linux系统有7种运行级别(runlevel)：常用的是级别3和5(CentOS7中只
 [root@192 ~]# cd /root/
 ```
 
-![](/image/vim_UgjmoDsYSb.png)
+![](image/vim_UgjmoDsYSb.png)
 
 ## 2. VIM的一般模式
 
