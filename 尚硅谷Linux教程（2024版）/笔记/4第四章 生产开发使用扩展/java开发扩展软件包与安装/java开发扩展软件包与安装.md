@@ -51,9 +51,9 @@ Apache-1.3.23-11.i386.rpm
     （2）rpm -e --nodeps 软件包
     ```
 -   选项说明
-    | 选项       | 功能                                          |
-    | -------- | ------------------------------------------- |
-    | -e       | 卸载软件包                                       |
+    | 选项       | 功能                                       |
+    | -------- | ---------------------------------------- |
+    | -e       | 卸载软件包                                    |
     | --nodeps | 卸载软件时，不检查依赖。这样的话，那些使用该软件包的软件在此之后可能就不能正常工作了。 |
 -   实操案例
     -   （1）卸载firefox软件
@@ -102,9 +102,9 @@ YUM（全称为 Yellow dog Updater, Modified）是一个在Fedora和RedHat以及
     yum [选项] [参数]
     ```
 -   选项说明
-    | 选项 | 功能            |
-    | -- | ------------- |
-    | -y | 对所有提问都回答“yes” |
+    | 选项   | 功能            |
+    | ---- | ------------- |
+    | -y   | 对所有提问都回答“yes” |
 -   参数说明
     | 参数           | 功能               |
     | ------------ | ---------------- |
@@ -209,6 +209,24 @@ rpm -ivh mysql-community-icu-data-files-8.0.30-1.el7.x86_64.rpm
 rpm -ivh mysql-community-server-8.0.30-1.el7.x86_64.rpm
 ```
 
+安装**rpm -ivh mysql-community-server-8.0.30-1.el7.x86_64.rpm**时可能会遇到问题：
+
+```
+[cang1xiao@aliyun opt]$ sudo rpm -ivh mysql-community-server-8.0.36-1.el7.x86_64.rpm 
+warning: mysql-community-server-8.0.36-1.el7.x86_64.rpm: Header V4 RSA/SHA256 Signature, key ID a8d3785c: NOKEY
+error: Failed dependencies:
+	libaio.so.1()(64bit) is needed by mysql-community-server-8.0.36-1.el7.x86_64
+	libaio.so.1(LIBAIO_0.1)(64bit) is needed by mysql-community-server-8.0.36-1.el7.x86_64
+	libaio.so.1(LIBAIO_0.4)(64bit) is needed by mysql-community-server-8.0.36-1.el7.x86_64
+
+```
+
+以上是因为缺少依赖，安装依赖：
+
+```
+[cang1xiao@aliyun opt]$ sudo yum -y install libaio
+```
+
 > 第五步 对MySQL进行初始化
 
 ```纯文本
@@ -227,11 +245,37 @@ chown -R mysql:mysql /var/lib/mysql/
 cat /var/log/mysqld.log | grep localhost
 ```
 
+查看**mysqld.log**里面可能什么都没有，是因为mysql服务没有启动，用以下命令启动及查看状态
+
+```
+[cang1xiao@aliyun log]$ sudo systemctl start mysqld.service 
+[cang1xiao@aliyun log]$ systemctl status mysqld.service 
+```
+
+
+
 > 第八步 登录mysql,并修改密码
 
 ```纯文本
 登录
 mysql -uroot -p
 修改密码
-alter user 'root'@'localhost' identified by 'root';
+mysql> ALTER USER USER() IDENTIFIED BY 'TXIHxise@753';
 ```
+初次登录修改密码必须按照密码强度修改密码。修改密码后，可以通过以下参数修改密码规则
+
+![](image/validate_password.png)
+
+最简单的方式是将**validate_password.check_user_name**改为**OFF**。修改密码后，重启**mysql**之后，这个设置会恢复。
+
+
+
+> 第九步 远程连接
+
+阿里云服务ECS添加安全组
+
+![](image/添加安全组.png)
+
+修改用户可以连接的host，然后刷新权限。
+
+![](image/update_host.png)
