@@ -648,6 +648,44 @@ fi
 
 （2）if后要有空格
 
+  (3)  以下这样写，不传参数有会报错：[: -eq: unary operator expected
+
+```sh
+#!/bin/bash
+
+if [ $1 -eq 1 ];then
+echo "我真帅！"
+elif [ $1 -eq 2 ];then
+echo "我老婆真美！"
+else
+echo "哈哈~"
+fi
+```
+
+究其原因，是因为如果变量参数为空，那么条件表达式**[\$ 1 -eq 1 ]**就成了 **[  -eq 1 ]** ，显然 **[** 和 **1** 不相等并且缺少了 **[** 符号，所以报了这样的错误。当然不总是出错，如果变量**\$1**值不为空，程序就正常了，所以这样的错误还是很隐蔽的。
+
+或者，用下面的方法也能避免这种错误：
+
+**if [ "\$1" -eq "1" ];**     **"\$1"**表示变量**\$1**为空的时候**"\$1"**为空字符串，并非什么都没有。
+
+修改之后的写法：
+
+```sh
+#!/bin/bash
+
+if [[ $1 -eq 1 ]];then
+	echo "我真帅！"
+elif [[ "$1" -eq "2" ]]
+then
+	echo "我老婆真美！"
+else
+	echo "哈哈~"
+fi
+
+```
+
+
+
 2）**案例实操**
 
 输入一个数字，如果是1，则输出banzhang zhen shuai，如果是2，则输出cls zhen mei，如果是其它，什么也不输出。
@@ -663,13 +701,13 @@ fi
 
  
 
-if [ $1 -eq 1 ]
+if [[ $1 -eq 1 ]]
 
 then
 
        echo "banzhang zhen shuai"
 
-elif [ $1 -eq 2 ]
+elif [[ $1 -eq 2 ]]
 
 then
 
@@ -724,7 +762,7 @@ esac
 
 2）**案例实操**
 
-输入一个数字，如果是1，则输出banzhang，如果是2，则输出cls，如果是其它，输出renyao。
+输入一个数字，如果是1，则输出banzhang，如果是2，则输出cls，如果是其它，输出renyao。 
 
 ```
 [atguigu@hadoop101 datas]$ touch case.sh
@@ -786,23 +824,19 @@ done
 
 从1加到100
 
-```
+```sh
 [atguigu@hadoop101 datas]$ touch for1.sh
 
 [atguigu@hadoop101 datas]$ vim for1.sh
 
- 
 
 #!/bin/bash
-
- 
 
 sum=0
 
 for((i=0;i<=100;i++))
 
 do
-
         sum=$[$sum+$i]
 
 done
@@ -810,7 +844,6 @@ done
 echo $sum
 
  
-
 [atguigu@hadoop101 datas]$ chmod 777 for1.sh 
 
 [atguigu@hadoop101 datas]$ ./for1.sh 
@@ -834,7 +867,7 @@ done
 
 （1）打印所有输入参数
 
-```
+```sh
 [atguigu@hadoop101 datas]$ touch for2.sh
 
 [atguigu@hadoop101 datas]$ vim for2.sh
@@ -845,12 +878,9 @@ done
 
 #打印数字
 
- 
-
 for i in cls mly wls
 
 do
-
      echo "ban zhang love $i"
 
 done
@@ -870,9 +900,9 @@ ban zhang love wls
 
 （2）比较$*和$@区别
 
-$*和$@都表示传递给函数或脚本的所有参数，不被双引号“”包含时，都以$1 $2 …$n的形式输出所有参数。
+$*和$@都表示传递给函数或脚本的所有参数，不被双引号“”包含时，都以\$1 \$2 …$n的形式输出所有参数。
 
-```
+```sh
 [atguigu@hadoop101 datas]$ touch for3.sh
 
 [atguigu@hadoop101 datas]$ vim for3.sh
@@ -928,9 +958,9 @@ banzhang love wls
 
 
 
-当它们被双引号“”包含时，$*会将所有的参数作为一个整体，以“$1 $2 …$n”的形式输出所有参数；$@会将各个参数分开，以“$1” “$2”…“$n”的形式输出所有参数。
+当它们被双引号“”包含时，\$*会将所有的参数作为一个整体，以“\$1 \$2 …\$n”的形式输出所有参数；\$@会将各个参数分开，以“\$1” “\$2”…“$n”的形式输出所有参数。
 
-```
+```sh
 [atguigu@hadoop101 datas]$ vim for4.sh
 
  
@@ -1000,7 +1030,7 @@ done
 
 从1加到100
 
-```
+```shell
 [atguigu@hadoop101 datas]$ touch while.sh
 
 [atguigu@hadoop101 datas]$ vim while.sh
@@ -1058,7 +1088,7 @@ read  (选项)  (参数)
 
 提示7秒内，读取控制台输入的名称
 
-```
+```sh
 [atguigu@hadoop101 datas]$ touch read.sh
 
 [atguigu@hadoop101 datas]$ vim read.sh
@@ -1090,7 +1120,7 @@ atguigu
 
 1）**基本语法**
 
-basename [string / pathname] [suffix]  	（功能描述：basename命令会删掉所有的前缀包括最后一个（‘/’）字符，然后将字符串显示出来。
+basename  [string / pathname\][suffix]  	（功能描述：basename命令会删掉所有的前缀包括最后一个（‘/’）字符，然后将字符串显示出来。
 
 选项：
 
@@ -1100,7 +1130,7 @@ suffix为后缀，如果suffix被指定了，basename会将pathname或string中�
 
 截取该/home/atguigu/banzhang.txt路径的文件名称
 
-```
+```sh
 [atguigu@hadoop101 datas]$ basename /home/atguigu/banzhang.txt 
 
 banzhang.txt
@@ -1120,7 +1150,7 @@ banzhang
 
 获取banzhang.txt文件的路径
 
-```
+```sh
 [atguigu@hadoop101 ~]$ dirname /home/atguigu/banzhang.txt 
 
 /home/atguigu
@@ -1150,7 +1180,7 @@ banzhang
 
 计算两个输入参数的和
 
-```
+```sh
 [atguigu@hadoop101 datas]$ touch fun.sh
 
 [atguigu@hadoop101 datas]$ vim fun.sh
@@ -1208,17 +1238,17 @@ cut [选项参数]  filename
 
 2）选项参数说明
 
-| 选项参数 | 功能                                           |
-| -------- | ---------------------------------------------- |
-| -f       | 列号，提取第几列                               |
-| -d       | 分隔符，按照指定分隔符分割列，默认是制表符“\t” |
-| -c       | 指定具体的字符                                 |
+| 选项参数 | 功能                        |
+| ---- | ------------------------- |
+| -f   | 列号，提取第几列                  |
+| -d   | 分隔符，按照指定分隔符分割列，默认是制表符“\t” |
+| -c   | 指定具体的字符                   |
 
 3）案例实操
 
 （1）数据准备
 
-```
+```sh
 [atguigu@hadoop101 datas]$ touch cut.txt
 
 [atguigu@hadoop101 datas]$ vim cut.txt
@@ -1308,22 +1338,22 @@ action：在找到匹配内容时所执行的一系列命令
 
 2）**选项参数说明**
 
-| 选项参数 | 功能                 |
-| -------- | -------------------- |
-| -F       | 指定输入文件折分隔符 |
-| -v       | 赋值一个用户定义变量 |
+| 选项参数 | 功能         |
+| ---- | ---------- |
+| -F   | 指定输入文件折分隔符 |
+| -v   | 赋值一个用户定义变量 |
 
 3）案例实操
 
 （1）数据准备
 
-```
+```sh
 [atguigu@hadoop101 datas]$ sudo cp /etc/passwd ./
 ```
 
 （2）搜索passwd文件以root关键字开头的所有行，并输出该行的第7列。
 
-```
+```sh
 [atguigu@hadoop101 datas]$ awk -F : '/^root/{print $7}' passwd 
 
 /bin/bash
@@ -1331,7 +1361,7 @@ action：在找到匹配内容时所执行的一系列命令
 
 （3）搜索passwd文件以root关键字开头的所有行，并输出该行的第1列和第7列，中间以“，”号分割。
 
-```
+```sh
 [atguigu@hadoop101 datas]$ awk -F : '/^root/{print $1","$7}' passwd 
 
 root,/bin/bash
@@ -1341,7 +1371,7 @@ root,/bin/bash
 
 （4）只显示/etc/passwd的第一列和第七列，以逗号分割，且在所有行前面添加列名user，shell在最后一行添加"dahaige，/bin/zuishuai"。
 
-```
+```sh
 [atguigu@hadoop101 datas]$ awk -F : 'BEGIN{print "user, shell"} {print $1","$7} END{print "dahaige,/bin/zuishuai"}' passwd
 
 user, shell
@@ -1361,7 +1391,7 @@ dahaige,/bin/zuishuai
 
 （5）将passwd文件中的用户id增加数值1并输出
 
-```
+```sh
 [atguigu@hadoop101 datas]$ awk -v i=1 -F : '{print $3+i}' passwd
 
 1
@@ -1375,10 +1405,10 @@ dahaige,/bin/zuishuai
 
 4**）awk的内置变量**
 
-| 变量     | 说明                                   |
-| -------- | -------------------------------------- |
-| FILENAME | 文件名                                 |
-| NR       | 已读的记录数（行号）                   |
+| 变量       | 说明                  |
+| -------- | ------------------- |
+| FILENAME | 文件名                 |
+| NR       | 已读的记录数（行号）          |
 | NF       | 浏览记录的域的个数（切割后，列的个数） |
 
 5）案例实操
@@ -1425,12 +1455,12 @@ sort命令是在Linux里非常有用，它将文件进行排序，并将排序�
 
 Sort  (选项)  (参数)
 
-| 选项 | 说明                     |
-| ---- | ------------------------ |
-| -n   | 依照数值的大小排序       |
-| -r   | 以相反的顺序来排序       |
+| 选项   | 说明           |
+| ---- | ------------ |
+| -n   | 依照数值的大小排序    |
+| -r   | 以相反的顺序来排序    |
 | -t   | 设置排序时所用的分隔字符 |
-| -k   | 指定需要排序的列         |
+| -k   | 指定需要排序的列     |
 
 参数：指定待排序的文件列表
 
@@ -1480,12 +1510,12 @@ wc  [选项参数]  filename
 
  
 
-| 选项参数 | 功能             |
-| -------- | ---------------- |
-| -l       | 统计文件行数     |
-| -w       | 统计文件的单词数 |
-| -m       | 统计文件的字符数 |
-| -c       | 统计文件的字节数 |
+| 选项参数 | 功能       |
+| ---- | -------- |
+| -l   | 统计文件行数   |
+| -w   | 统计文件的单词数 |
+| -m   | 统计文件的字符数 |
+| -c   | 统计文件的字节数 |
 
 2）案例实操
 
@@ -1537,6 +1567,8 @@ $ 匹配一行的结束，例如
 
 思考：^**$** 匹配什么？
 
+匹配空行
+
 3）特殊字符：**.**
 
 . 匹配一个任意的字符，例如
@@ -1558,6 +1590,8 @@ $ 匹配一行的结束，例如
 会匹配rt, rot, root, rooot, roooot等所有行
 
 思考：.* 匹配什么？
+
+匹配任意单个或多个字符
 
 5）特殊字符：[ ]
 
