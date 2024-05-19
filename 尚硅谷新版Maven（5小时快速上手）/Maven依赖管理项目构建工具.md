@@ -237,7 +237,7 @@ Maven就是一个软件，掌握安装、配置、以及基本功能 **（项目
 
 各个工具选用版本：
 
-| 工具  | 版本   |
+| 工具    | 版本     |
 | ----- | ------ |
 | Maven | 3.8.8  |
 | JDK   | 17     |
@@ -397,11 +397,11 @@ GAV遵循一下规则：
 
 1.  手动创建
     1. 创建一个maven的javase工程
-    
+
        ![image-20231021150134082](image/image-20231021150134082.png)
-    
+
     2. 修改pom.xml文件打包方式
-    
+
        修改位置：项目下/pom.xml
        ```xml
        <groupId>com.atguigu</groupId>
@@ -410,23 +410,23 @@ GAV遵循一下规则：
        <!-- 新增一列打包方式packaging -->
        <packaging>war</packaging>
        ```
-    
+
     3. 设置**web资源路径**和**web.xml路径**
-    
+
        点击File-->Project Structure
-    
+
        ![image-20231021151040531](image/image-20231021151040531.png)
-    
+
        ![image-20231021151627161](image/image-20231021151627161.png)
-    
+
        ![image-20231021151753318](image/image-20231021151753318.png)
-    
+
     4. 刷新和校验
-    
+
        ![image-20231021152310802](image/image-20231021152310802.png)
-    
+
        ![image-20231021151921943](image/image-20231021151921943.png)
-    
+
 2.  插件创建
     1.  安装插件JBLJavaToWeb
 
@@ -491,15 +491,15 @@ Maven 是一个强大的构建工具，它提供一种标准化的项目结构�
 
 ### 2. 命令方式项目构建
 
-| 命令        | 描述                        |
-| ----------- | --------------------------- |
-| mvn compile | 编译项目，生成target文件    |
-| mvn package | 打包项目，生成jar或war文件  |
-| mvn clean   | 清理编译或打包后的项目结构  |
-| mvn install | 打包后上传到maven本地仓库   |
-| mvn deploy  | 只打包，上传到maven私服仓库 |
-| mvn site    | 生成站点                    |
-| mvn test    | 执行测试源码                |
+| 命令                           | 描述               |
+| ---------------------------- | ---------------- |
+| mvn compile/mvn test-compile | 编译项目，生成target文件  |
+| mvn package                  | 打包项目，生成jar或war文件 |
+| mvn clean                    | 清理编译或打包后的项目结构    |
+| mvn install                  | 打包后上传到maven本地仓库  |
+| mvn deploy                   | 只打包，上传到maven私服仓库 |
+| mvn site                     | 生成站点             |
+| mvn test                     | 执行测试源码           |
 
 war包打包插件和jdk版本不匹配：pom.xml 添加以下代码即可
 
@@ -541,48 +541,54 @@ mvn test
 
 ### 4. 构建插件、命令、生命周期命令之间关系
 
--   **构建生命周期**
+**构建生命周期**
 
-    我们发现一个情况！当我们执行package命令也会自动执行compile命令！
-    ```xml
-    [INFO] --------------------------------[ jar ]---------------------------------
-    [INFO] 
-    [INFO] --- maven-resources-plugin:2.6:resources (default-resources) @ mybatis-base-curd ---
-    [INFO] --- maven-compiler-plugin:3.1:compile (default-compile) @ mybatis-base-curd ---
-    [INFO] --- maven-resources-plugin:2.6:testResources (default-testResources) @ mybatis-base-curd ---
-    [INFO] --- maven-compiler-plugin:3.1:testCompile (default-testCompile) @ mybatis-base-curd ---
-    [INFO] --- maven-surefire-plugin:2.12.4:test (default-test) @ mybatis-base-curd ---
-    [INFO] --- maven-jar-plugin:2.4:jar (default-jar) @ mybatis-base-curd ---
-    [INFO] Building jar: D:\javaprojects\backend-engineering\part03-mybatis\mybatis-base-curd\target\mybatis-base-curd-1.0-SNAPSHOT.jar
-    [INFO] ------------------------------------------------------------------------
-    [INFO] BUILD SUCCESS
-    [INFO] ------------------------------------------------------------------------
-    [INFO] Total time:  5.013 s
-    [INFO] Finished at: 2023-06-05T10:03:47+08:00
-    [INFO] ------------------------------------------------------------------------
+我们发现一个情况！当我们执行package命令也会自动执行compile命令！
+```xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- maven-resources-plugin:2.6:resources (default-resources) @ mybatis-base-curd ---
+[INFO] --- maven-compiler-plugin:3.1:compile (default-compile) @ mybatis-base-curd ---
+[INFO] --- maven-resources-plugin:2.6:testResources (default-testResources) @ mybatis-base-curd ---
+[INFO] --- maven-compiler-plugin:3.1:testCompile (default-testCompile) @ mybatis-base-curd ---
+[INFO] --- maven-surefire-plugin:2.12.4:test (default-test) @ mybatis-base-curd ---
+[INFO] --- maven-jar-plugin:2.4:jar (default-jar) @ mybatis-base-curd ---
+[INFO] Building jar: D:\javaprojects\backend-engineering\part03-mybatis\mybatis-base-curd\target\mybatis-base-curd-1.0-SNAPSHOT.jar
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  5.013 s
+[INFO] Finished at: 2023-06-05T10:03:47+08:00
+[INFO] ------------------------------------------------------------------------
+```
+这种行为就是因为构建生命周期产生的！构建生命周期可以理解成是一组固定构建命令的有序集合，触发周期后的命令，会自动触发周期前的命令！！！
+
+**构建周期作用：会简化构建过程**
+
+例如：项目打包   mvn clean package即可。&#x20;
+
+主要两个构建生命周期：
+-   清理周期：主要是对项目编译生成文件进行清理
+
     ```
-    这种行为就是因为构建生命周期产生的！构建生命周期可以理解成是一组固定构建命令的有序集合，触发周期后的命令，会自动触发周期前的命令！！！
+    包含命令：clean
+    ```
 
-    **构建周期作用：会简化构建过程**
+- 默认周期：定义了真正构件时所需要执行的所有步骤，它是生命周期中最核心的部分
 
-    例如：项目打包   mvn clean package即可。&#x20;
+  ```
+  包含命令：compile -  test - package - install - deploy
+  ```
 
-    主要两个构建生命周期：
-    -   清理周期：主要是对项目编译生成文件进行清理
+  ​
 
-        包含命令：clean&#x20;
-    
--   默认周期：定义了真正构件时所需要执行的所有步骤，它是生命周期中最核心的部分
-    
-        包含命令：compile -  test - package - install - deploy
+**插件、命令、周期三者关系（了解）**
 
--   **插件、命令、周期三者关系（了解）**
+周期→包含若干命令→包含若干插件
 
-    周期→包含若干命令→包含若干插件
+使用周期命令构建，简化构建过程！
 
-    使用周期命令构建，简化构建过程！
-
-    最终进行构建的是插件！
+最终进行构建的是插件！
 
 ## 五、基于IDEA 进行Maven依赖管理
 
@@ -670,8 +676,8 @@ Maven 依赖管理是 Maven 软件中最重要的功能之一。Maven 的依赖�
 
 通过设置坐标的依赖范围(scope)，可以设置 对应jar包的作用范围：编译环境、测试环境、运行环境
 
-| 依赖范围     | 描述                                                         |
-| ------------ | ------------------------------------------------------------ |
+| 依赖范围         | 描述                                       |
+| ------------ | ---------------------------------------- |
 | **compile**  | 编译依赖范围，scope 元素的缺省值。使用此依赖范围的 Maven 依赖，对于三种 classpath 均有效，即该 Maven 依赖在上述三种 classpath 均会被引入。例如，log4j 在编译、测试、运行过程都是必须的。 |
 | **test**     | 测试依赖范围。使用此依赖范围的 Maven 依赖，只对测试 classpath 有效。例如，Junit 依赖只有在测试阶段才需要。 |
 | **provided** | 已提供依赖范围。使用此依赖范围的 Maven 依赖，只对编译 classpath 和测试 classpath 有效。例如，servlet-api 依赖对于编译、测试阶段而言是需要的，但是运行阶段，由于外部容器已经提供，故不需要 Maven 重复引入该依赖。 |
@@ -690,7 +696,9 @@ Maven 依赖管理是 Maven 软件中最重要的功能之一。Maven 的依赖�
 解决方案：
 
 1.  检查网络连接和 Maven 仓库服务器状态。
+
 2.  确保依赖项的版本号与项目对应的版本号匹配，并检查 POM 文件中的依赖项是否正确。
+
 3.  清除本地 Maven 仓库缓存（lastUpdated 文件），因为只要存在lastupdated缓存文件，刷新也不会重新下载。本地仓库中，根据依赖的gav属性依次向下查找文件夹，最终删除内部的文件，刷新重新下载即可！
 
     例如： pom.xml依赖
@@ -706,6 +714,8 @@ Maven 依赖管理是 Maven 软件中最重要的功能之一。Maven 的依赖�
     ![](image/image_m3iQtBLARz.png)
 
 4. 或者可以将清除**lastUpdated文件**的操作写在一个脚本文件中，手动创建文件"clearLastUpdated.bat"，名字任意，但是后缀必须是bat，将以下内容复制到文件中
+
+   **乱码的话，用编辑器打开txt文件，先设置编码为GBK，再复制进去即可**
 
    ```bat
    cls 
@@ -925,6 +935,7 @@ maven自动解决依赖冲突问题能力，会按照自己的原则，进行重
         A—>F—>X(version 0.0.2)
 
         在\<depencies>\</depencies>中，先声明的，路径相同，会优先选择！
+
 2.  手动排除
     ```xml
     <dependency>
@@ -943,6 +954,7 @@ maven自动解决依赖冲突问题能力，会按照自己的原则，进行重
       </exclusions>
     </dependency>
     ```
+
 3.  小案例
 
     伪代码如下：
@@ -957,6 +969,8 @@ maven自动解决依赖冲突问题能力，会按照自己的原则，进行重
     ```
     请问最终会导入哪些依赖和对应版本？
 
+    A 1.1 B2.2 F2.2
+
 ## 七、Maven工程继承和聚合关系
 
 ### 1. Maven工程继承关系
@@ -964,7 +978,7 @@ maven自动解决依赖冲突问题能力，会按照自己的原则，进行重
 1.  继承概念
 
     Maven 继承是指在 Maven 的项目中，让一个项目从另一个项目中继承配置信息的机制。继承可以让我们在多个项目中共享同一配置信息，简化项目的管理和维护工作。
-    
+
 2.  继承作用
 
     在父工程中统一管理项目中的依赖信息。
@@ -973,14 +987,14 @@ maven自动解决依赖冲突问题能力，会按照自己的原则，进行重
     -   对一个比较大型的项目进行了模块拆分。
     -   一个 project 下面，创建了很多个 module。
     -   每一个 module 都需要配置自己的依赖信息。
-    
+
     它背后的需求是：
-    
+
     -   在每一个 module 中各自维护各自的依赖信息很容易发生出入，不易统一管理。
     -   使用同一个框架内的不同 jar 包，它们应该是同一个版本，所以整个项目中使用的框架版本需要统一。
     -   使用框架时所需要的 jar 包组合（或者说依赖信息组合）需要经过长期摸索和反复调试，最终确定一个可用组合。这个耗费很大精力总结出来的方案不应该在新的项目中重新摸索。
         通过在父工程中为整个项目维护依赖信息的组合既保证了整个项目使用规范、准确的 jar 包；又能够将以往的经验沉淀下来，节约时间和精力。
-    
+
 3.  继承语法
     -   父工程
         ```xml
@@ -989,7 +1003,7 @@ maven自动解决依赖冲突问题能力，会按照自己的原则，进行重
           <version>1.0-SNAPSHOT</version>
           <!-- 当前工程作为父工程，它要去管理子工程，所以打包方式必须是 pom -->
           <packaging>pom</packaging>
-        
+
         ```
     -   子工程
         ```xml
@@ -1000,14 +1014,14 @@ maven自动解决依赖冲突问题能力，会按照自己的原则，进行重
           <artifactId>pro03-maven-parent</artifactId>
           <version>1.0-SNAPSHOT</version>
         </parent>
-        
+
         <!-- 子工程的坐标 -->
         <!-- 如果子工程坐标中的groupId和version与父工程一致，那么可以省略 -->
         <!-- <groupId>com.atguigu.maven</groupId> -->
         <artifactId>pro04-maven-module</artifactId>
         <!-- <version>1.0-SNAPSHOT</version> -->
         ```
-    
+
 4.  父工程依赖统一管理
     -   父工程声明版本
         ```xml
@@ -1187,16 +1201,16 @@ Maven 私服是一种特殊的Maven远程仓库，它是架设在局域网内的
 
 ![images](image/img009.7f737ed7.png)
 
-| 仓库类型 | 说明                                           |
-| -------- | ---------------------------------------------- |
-| proxy    | 某个远程仓库的代理                             |
-| group    | 存放：通过 Nexus 获取的第三方 jar 包           |
-| hosted   | 存放：本团队其他开发人员部署到 Nexus 的 jar 包 |
+| 仓库类型   | 说明                            |
+| ------ | ----------------------------- |
+| proxy  | 某个远程仓库的代理                     |
+| group  | 存放：通过 Nexus 获取的第三方 jar 包      |
+| hosted | 存放：本团队其他开发人员部署到 Nexus 的 jar 包 |
 
-| 仓库名称        | 说明                                                         |
-| --------------- | ------------------------------------------------------------ |
-| maven-central   | Nexus 对 Maven 中央仓库的代理                                |
-| maven-public    | Nexus 默认创建，供开发人员下载使用的组仓库                   |
+| 仓库名称            | 说明                                       |
+| --------------- | ---------------------------------------- |
+| maven-central   | Nexus 对 Maven 中央仓库的代理                    |
+| maven-public    | Nexus 默认创建，供开发人员下载使用的组仓库                 |
 | maven-releases  | Nexus 默认创建，供开发人员部署自己 jar 包的宿主仓库 要求 releases 版本 |
 | maven-snapshots | Nexus 默认创建，供开发人员部署自己 jar 包的宿主仓库 要求 snapshots 版本 |
 
