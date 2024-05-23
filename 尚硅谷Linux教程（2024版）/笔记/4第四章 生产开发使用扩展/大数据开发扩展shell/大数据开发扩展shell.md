@@ -1625,3 +1625,48 @@ $ 匹配一行的结束，例如
 
 就会匹配所有包含 a$b 的行。
 
+
+
+
+
+
+
+# 脚本
+
+## xsync
+
+> 在目录：
+
+```
+/usr/local/bin
+```
+
+>   创建文件名为：xsync
+
+文件内容如下：
+
+```shell
+#!/bin/bash
+if [ $# == 0 ]; then
+   echo "请输入需要同步的文件/目录" && exit
+fi
+
+for host in centos100 centos102 centos103 ; do
+    echo "=========$host========="
+    for file in $@ ; do
+        if [ -e $file ]; then
+            dir=$(cd -P $(dirname ${file});pwd)
+            fileName=$(basename $file)
+            rsync -avz -e "ssh" ${dir}/${fileName} $host:${dir}
+        fi
+    done
+done
+```
+
+> 实现免密同步：
+
+![](image/xsync免密配置.png)
+
+最终效果：
+
+![](image/xsync最终效果.png)
